@@ -3,7 +3,8 @@ version: '2'
 services: 
 
   drupal:
-    image: drupal
+    image: custom-drupal
+    build: .
     ports:
       - 9000:80
     volumes:
@@ -15,8 +16,13 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: test
+    volumes:
+      - drupal-data:/var/lib/postgresql/data
+
 volumes:
   drupal-modules:
   drupal-profiles:
   drupal-sites:
   drupal-themes:
+  drupal-data:
+  
