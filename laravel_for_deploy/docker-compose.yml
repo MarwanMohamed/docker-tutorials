@@ -1,0 +1,51 @@
+version: '3.1'
+
+services:
+  
+  webserver:
+    image: nginx:alpine
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravelApp
+    ports:
+      - 8001:8000
+    volumes:
+      - ./:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    depends_on: 
+      - db
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: my_project
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./storage/dbdata:/var/lib/mysql
+    ports:
+      - 33063:3306
+
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8888:80
+    environment:
+      - PMA_ARBITRARY=1
+
+volumes:
+  db:
